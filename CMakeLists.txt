@@ -42,18 +42,7 @@ if((NOT HAVE_INI_CONFIG) OR (NOT HAVE_INI_CONFIG_H))
       message(FATAL_ERROR "Cannot find ini_config")
 endif((NOT HAVE_INI_CONFIG) OR (NOT HAVE_INI_CONFIG_H))
 
-## Check for MOTR
-find_library(HAVE_MOTR motr)
-check_library_exists(
-        motr
-        m0_init
-        ""
-        HAVE_MOTR
-	)
-check_include_files("motr/config.h" HAVE_MOTR_H)
-
 ## Check for HIREDIS ##
-
 find_library(HAVE_HIREDIS hiredis)
 check_library_exists(
     hiredis
@@ -69,36 +58,15 @@ else (HAVE_HIREDIS_H AND HAVE_HIREDIS)
 	set(BCOND_REDIS "%bcond_with")
 endif (HAVE_HIREDIS_H AND HAVE_HIREDIS)
 
-
-if (HAVE_MOTR_H AND HAVE_MOTR)
-	set(BCOND_MOTR "%bcond_without")
-else (HAVE_MOTR_H AND HAVE_MOTR)
-	set(BCOND_MOTR "%bcond_with")
-endif (HAVE_MOTR_H AND HAVE_MOTR)
+set(BCOND_MOTR "%bcond_with") # motr won't be used in iosea project
 
 if (HAVE_HIREDIS_H AND HAVE_HIREDIS)
 	set(HAVE_KVS TRUE)
 endif (HAVE_HIREDIS_H AND HAVE_HIREDIS)
 
-if (HAVE_MOTR_H AND HAVE_MOTR)
-	set(HAVE_KVS TRUE)
-endif (HAVE_MOTR_H AND HAVE_MOTR)
-
 if (NOT HAVE_KVS)
 	message(FATAL_ERROR "Can't find a KVS")
 endif (NOT HAVE_KVS)
-
-if((HAVE_MOTR) AND (HAVE_MOTR_H))
-      message(STATUS "Motr was found, looking for m0common")
-        find_library(HAVE_M0COMMON m0common)
-        check_library_exists(
-                m0common
-                m0init
-                ""
-                HAVE_M0COMMON
-                )
-endif((HAVE_MOTR) AND (HAVE_MOTR_H))
-
 
 # Build ancillary libs
 add_subdirectory(kvsal)
